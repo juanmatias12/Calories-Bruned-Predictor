@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def preprocess_data(data):
-    # Check if the 'Gender' column exists and convert it
+    # Check if the 'Gender' column exists and convert it. Can't use string values. 
     if 'Gender' in data.columns:
         # Map 'male' to 0 and 'female' to 1
         gender_map = {'male': 0, 'female': 1}
