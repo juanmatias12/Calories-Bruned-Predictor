@@ -1,22 +1,22 @@
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 
 
 def preprocess_data(data):
-    # Convert all columns except the first to numeric
-    # The first column 'Activity, Exercise or Sport (1 hour)' should remain as text
-    cols = data.columns.drop('Activity, Exercise or Sport (1 hour)')
-    data[cols] = data[cols].apply(pd.to_numeric, errors='coerce')
+    # Check if the 'Gender' column exists and convert it
+    if 'Gender' in data.columns:
+        # Map 'male' to 0 and 'female' to 1
+        gender_map = {'male': 0, 'female': 1}
+        data['Gender'] = data['Gender'].map(gender_map)
 
-    # Now, only drop rows where the numeric conversions failed (if any)
-    data.dropna(subset=cols, inplace=True)
+    # Convert categorical variables to numeric using one-hot encoding
+    # Assuming other categorical columns need to be transformed if they exist
+    categorical_cols = data.select_dtypes(include=['object']).columns
+    data = pd.get_dummies(data, columns=categorical_cols, drop_first=True)
+
+    # Convert all columns to numeric, coercing errors for any remaining non-numeric columns
+    data = data.apply(pd.to_numeric, errors='coerce')
+
+    # Fill missing values, if any, using forward fill
+    data.ffill(inplace=True)
 
     return data
-
-
-
-def scale_features(X_train, X_test):
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-    return X_train_scaled, X_test_scaled

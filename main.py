@@ -1,42 +1,36 @@
-import sys
-from load_data import load_dataset
+from load_data import load_datasets
 from process_data import preprocess_data
-from features import split_data
-from train_model import train_linear_regression, train_random_forest, train_gbm
-from evaluate_model import evaluate_model
-from visualize import plot_predictions
+from train_model import train_and_evaluate_models
+from visualize import plot_predictions, plot_performance
 
 def main():
-    file_path = '/Users/chico/Documents/CS450 Calories Burned Final/exercise_dataset.csv'
-    target_column = 'Calories per kg'
+    # Paths to your datasets
+    calories_path = '/Users/chico/Documents/CS450 Calories Burned Final/calories.csv'
+    exercise_path = '/Users/chico/Documents/CS450 Calories Burned Final/exercise.csv'
 
     # Load and preprocess the data
-    data = load_dataset(file_path)
-    processed_data = preprocess_data(data)
+    print("Loading and preprocessing data...")
+    combined_data = load_datasets(calories_path, exercise_path)
+    processed_data = preprocess_data(combined_data)
 
-    # Prepare the data
-    X = processed_data.drop(columns=['Activity, Exercise or Sport (1 hour)', target_column], errors='ignore')
+    # Assuming 'Calories' is your target column, adjust if it's different
+    target_column = 'Calories'
+    X = processed_data.drop(columns=[target_column])
     y = processed_data[target_column]
 
-    # Assuming command-line argument to choose the model type
-    model_type = sys.argv[1] if len(sys.argv) > 1 else 'logistic_regression'
+    # Train models and evaluate performance
+    print("Training and evaluating models...")
+    performance = train_and_evaluate_models(X, y)
 
-    if model_type == 'random_forest':
-        model = train_random_forest(X, y)
-    elif model_type == 'gbm':
-        model = train_gbm(X, y)
-    elif model_type == 'linear_regression':
-        model = train_linear_regression(X,y)
-    else:
-        raise ValueError(f"Unsupported model type: {model_type}")
+    # Visualize the performance of models
+    print("Visualizing model performance...")
+    plot_performance(performance)
 
-    # Evaluate the chosen model
-    predictions = model.predict(X)
-    mae = evaluate_model(y, predictions)
-    print(f'{model_type.upper()} MAE: {mae}')
+    # Visualize predictions for each model
+    for model_name, info in performance.items():
+        print(f"Visualizing predictions for {model_name}...")
+        plot_predictions(actual=info['y_test'], predicted=info['predictions'], model_name=model_name)
 
-    #Plotting the predictions against the actual values
-    plot_predictions(y, predictions)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
