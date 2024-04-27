@@ -4,7 +4,7 @@ from train_model import train_and_evaluate_models
 from visualize import plot_predictions, plot_performance
 
 def main():
-    # Paths to your datasets
+
     calories_path = '/Users/chico/Documents/CS450 Calories Burned Final/calories.csv'
     exercise_path = '/Users/chico/Documents/CS450 Calories Burned Final/exercise.csv'
 
@@ -13,7 +13,7 @@ def main():
     combined_data = load_datasets(calories_path, exercise_path)
     processed_data = preprocess_data(combined_data)
 
-    # Assuming 'Calories' is your target column, adjust if it's different
+    # Calories is the target column 
     target_column = 'Calories'
     X = processed_data.drop(columns=[target_column])
     y = processed_data[target_column]
