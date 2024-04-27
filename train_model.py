@@ -32,7 +32,7 @@ def train_and_evaluate_models(X, y):
         print(f'{name} MAE: {mae}')
 
 
-        #Saving the XGB model to a file after training
+        #Saving the XGB model to a file after training for application window
 
         if name == 'XGB':
             joblib.dump(model, 'xgb_model.pkl')
@@ -51,7 +51,7 @@ if __name__ == '__main__':
     combined_data = load_datasets(calories_path, exercise_path)
     processed_data = preprocess_data(combined_data)
 
-    # Define the target column name (update this to your actual target column)
+    # Defining the target column 
     target_column = 'Calories'
 
     # Split the processed data into features and target
